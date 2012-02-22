@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, lolwotdActivity!</string>
+    <string name="startbtn">Start</string>
+    <string name="stopbtn">Stop</string>
+    <string name="resetbtn">Reset</string>
     <string name="app_name">LoL Win of the Day Counter</string>
 
 </resources>
