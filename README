@@ -1,0 +1,32 @@
++--------------------------------------------+
+| League of Legends - Win of the Day Counter |
+| Software Version: 0.2                      |
+| Author: Paul Gatterdam                     |
+| Release: February 22nd, 2012               |
+| https://github.com/xingped/lol-wotd        |
++--------------------------------------------+
+
+This project is a countdown timer to notify the user of when their League of 
+Legends Win of the Day bonus is available (22 hours from last Win of the Day
+bonus).
+
+
+Version History
+----------------
+0.1: Basic app complete.
+0.2: Added status bar notification.
+0.3: Prettified app with graphics.
+
+
+Bugs / To-Do List
+------------------
+ - Currently no persistance, countdown stops on app close.
+
+
+ +------------------------------+
+ | Contact Information          |
+ +------------------------------+
+ | Paul Gatterdam               |
+ | pjgatt56-at-gmail-dot-com    |
+ | http://www.paulgatterdam.com |
+ +------------------------------+
