@@ -68,17 +68,6 @@ public class lolwotdActivity extends Activity
         	}
         );
         
-        Button resetbtn = (Button)findViewById(R.id.resetbtn);
-        resetbtn.setOnClickListener(new View.OnClickListener()
-        	{
-        		public void onClick(View arg0)
-        		{
-        			stopTimer();
-        			startTimer();
-        		}
-        	}
-        );
-        
     }
 	
 	public void startTimer()
@@ -91,7 +80,7 @@ public class lolwotdActivity extends Activity
 			// put get start time here
 			now.setToNow();
 			// End time is now + 22 hours
-			end.set(now.toMillis(false) + 22 * 60 * 60 * 1000);
+			end.set(now.toMillis(false) + 10 * 1000/*22 * 60 * 60 * 1000*/);
 			
 			// change this to simply 22 hours in hours/min/sec
 			long diffInMis = end.toMillis(false) - now.toMillis(false);
@@ -133,7 +122,7 @@ public class lolwotdActivity extends Activity
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
 		   
 		//Instantiate the Notification
-		int icon = android.R.drawable.ic_dialog_alert;
+		int icon = R.drawable.lolicon;
 		CharSequence tickerText = "LoL - WotD Available!";
 		long when = System.currentTimeMillis();
 		
