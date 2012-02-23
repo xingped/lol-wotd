@@ -16,11 +16,13 @@ Version History
 0.1: Basic app complete.
 0.2: Added status bar notification.
 0.3: Prettified app with graphics.
+0.4a: Attempting persistance with SharedPreferences.
 
 
 Bugs / To-Do List
 ------------------
  - Currently no persistance, countdown stops on app close.
+ - Layout settings for landscape view and other devices.
 
 
  +------------------------------+

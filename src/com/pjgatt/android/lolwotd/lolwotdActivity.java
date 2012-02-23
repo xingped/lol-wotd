@@ -1,7 +1,6 @@
 package com.pjgatt.android.lolwotd;
 
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -11,6 +10,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.format.Time;
@@ -27,25 +27,27 @@ public class lolwotdActivity extends Activity
 	Date endDate = null;
 	Date startDate = null;
 	
-	Time now = null;
-	Time end = null;
+	Time now = new Time();
+	Time end = new Time();
 	
-	NumberFormat myFormat = NumberFormat.getInstance();
+	NumberFormat twoDigitNumFormat = NumberFormat.getInstance();
 	
 	private static final int ID_My_Notification = 1;
 	
+	SharedPreferences prefs;
+	long endTimePref = 0;
+	
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+	{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        final SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss");
         
         hour = (TextView)findViewById(R.id.hour);
         min = (TextView)findViewById(R.id.min);
         sec = (TextView)findViewById(R.id.sec);
         
-        myFormat.setMinimumIntegerDigits(2);
+        twoDigitNumFormat.setMinimumIntegerDigits(2);
         
         Button startbtn = (Button)findViewById(R.id.startbtn);
         startbtn.setOnClickListener(new View.OnClickListener()
@@ -68,39 +70,70 @@ public class lolwotdActivity extends Activity
         	}
         );
         
+        prefs = getPreferences(Context.MODE_PRIVATE);
+        
+        endTimePref = prefs.getLong("endTime", 0);
+        
+        if(endTimePref != 0)
+        {
+        	startTimer();
+        }
     }
+	
+	
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+        prefs = getPreferences(Context.MODE_PRIVATE);
+        
+        endTimePref = prefs.getLong("endTime", 0);
+        
+        if(endTimePref != 0)
+        {
+        	startTimer();
+        }
+	}
 	
 	public void startTimer()
 	{
-		if(now == null)
+        prefs = getPreferences(Context.MODE_PRIVATE);
+        endTimePref = prefs.getLong("endTime", 0);
+        
+        now.setToNow();
+        
+		if(endTimePref == 0)
 		{
-			now = new Time();
-			end = new Time();
-			
-			// put get start time here
-			now.setToNow();
 			// End time is now + 22 hours
-			end.set(now.toMillis(false) + 10 * 1000/*22 * 60 * 60 * 1000*/);
+			end.set(now.toMillis(false) + 22 * 60 * 60 * 1000);
 			
-			// change this to simply 22 hours in hours/min/sec
-			long diffInMis = end.toMillis(false) - now.toMillis(false);
-			
-			long diff = TimeUnit.MILLISECONDS.toSeconds(diffInMis);
-			
-			iHour = (int) (diff/3600);
-			long lhour = (diff % (3600));
-			
-			iMin = (int) (lhour/60);
-			long lmin = (lhour % (60));
-			
-			iSec = (int) (lmin);
-			
-			hour.setText(String.valueOf(myFormat.format(iHour)).toString());
-			min.setText(":" + String.valueOf(myFormat.format(iMin)).toString());
-			sec.setText(":" + String.valueOf(myFormat.format(iSec)).toString());
-			
-			counter = new MyCount(iSec*1000, 1000);
+			prefs.edit().putLong("endTime", end.toMillis(false));
+			prefs.edit().commit();
 		}
+		else
+		{
+			end.set(endTimePref);
+		}
+		
+		// Calculate time from now to end
+		long diffInMis = end.toMillis(false) - now.toMillis(false);
+		
+		long diff = TimeUnit.MILLISECONDS.toSeconds(diffInMis);
+		
+		iHour = (int) (diff/3600);
+		long lhour = (diff % (3600));
+		
+		iMin = (int) (lhour/60);
+		long lmin = (lhour % (60));
+		
+		iSec = (int) (lmin);
+		
+		hour.setText(String.valueOf(twoDigitNumFormat.format(iHour)).toString());
+		min.setText(":" + String.valueOf(twoDigitNumFormat.format(iMin)).toString());
+		sec.setText(":" + String.valueOf(twoDigitNumFormat.format(iSec)).toString());
+		
+		counter = new MyCount(iSec*1000, 1000);
 		
 		counter.start();
 	}
@@ -108,8 +141,9 @@ public class lolwotdActivity extends Activity
 	public void stopTimer()
 	{
 		counter.cancel();
-		now = null;
-		end = null;
+		endTimePref = 0;
+		prefs.edit().remove("endTime");
+		prefs.edit().commit();
 		hour.setText("00");
 		min.setText(":00");
 		sec.setText(":00");
@@ -132,7 +166,7 @@ public class lolwotdActivity extends Activity
 		Context context = getApplicationContext();
 		CharSequence contentTitle = "LoL Win of the Day";
 		CharSequence contentText = "Win of the Day Available!";
-		//Intent notificationIntent = new Intent(AndroidStatusBarNotifications.this, AndroidStatusBarNotifications.class);
+		
 		Intent notificationIntent = new Intent(getBaseContext(), lolwotdActivity.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(lolwotdActivity.this, 0, notificationIntent, 0);
 		
@@ -159,22 +193,22 @@ public class lolwotdActivity extends Activity
 			
 			if(iMin > -1)
 			{
-				min.setText(":" + String.valueOf(myFormat.format(iMin)).toString());
+				min.setText(":" + String.valueOf(twoDigitNumFormat.format(iMin)).toString());
 			}
 			else
 			{
 				iMin = 59;
-				min.setText(":" + String.valueOf(myFormat.format(iMin)).toString());
+				min.setText(":" + String.valueOf(twoDigitNumFormat.format(iMin)).toString());
 				iHour -= 1;
 				
 				if(iHour > -1)
 				{
-					hour.setText(String.valueOf(myFormat.format(iHour)).toString());
+					hour.setText(String.valueOf(twoDigitNumFormat.format(iHour)).toString());
 				}
 				else
 				{
 					iHour = 11;
-					hour.setText(String.valueOf(myFormat.format(iHour)).toString());
+					hour.setText(String.valueOf(twoDigitNumFormat.format(iHour)).toString());
 					iDay -= 1;
 					
 					if(iDay < 0)
@@ -189,7 +223,7 @@ public class lolwotdActivity extends Activity
 		@Override
 		public void onTick(long millisUntilFinished)
 		{
-			sec.setText(":" + String.valueOf(myFormat.format(millisUntilFinished/1000)));
+			sec.setText(":" + String.valueOf(twoDigitNumFormat.format(millisUntilFinished/1000)));
 		}
 	}
 }
