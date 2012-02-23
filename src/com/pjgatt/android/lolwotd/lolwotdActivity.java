@@ -108,8 +108,7 @@ public class lolwotdActivity extends Activity
 			// End time is now + 22 hours
 			end.set(now.toMillis(false) + 22 * 60 * 60 * 1000);
 			
-			prefs.edit().putLong("endTime", end.toMillis(false));
-			prefs.edit().commit();
+			prefs.edit().putLong("endTime", end.toMillis(false)).commit();
 		}
 		else
 		{
@@ -141,9 +140,7 @@ public class lolwotdActivity extends Activity
 	public void stopTimer()
 	{
 		counter.cancel();
-		endTimePref = 0;
-		prefs.edit().remove("endTime");
-		prefs.edit().commit();
+		prefs.edit().remove("endTime").commit();
 		hour.setText("00");
 		min.setText(":00");
 		sec.setText(":00");
