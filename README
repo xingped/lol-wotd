@@ -22,6 +22,7 @@ Version History
 Bugs / To-Do List
 ------------------
  - Layout settings for landscape view and other devices.
+ - Turn app into service to allow notifications while app not in focus.
 
 
  +------------------------------+
